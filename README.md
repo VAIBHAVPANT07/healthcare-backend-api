@@ -1,6 +1,6 @@
 # 🏥 Healthcare Backend API
 
-A scalable backend system for managing healthcare records — including patients, doctors, and their mappings — built using Django, Django REST Framework, and PostgreSQL with secure JWT authentication.
+A scalable and production-ready backend system for managing healthcare records — including patients, doctors, and their mappings — built using **Django**, **Django REST Framework**, and **PostgreSQL** with secure **JWT authentication**.
 
 ---
 
@@ -22,7 +22,7 @@ A scalable backend system for managing healthcare records — including patients
 * **Django 4.2**
 * **Django REST Framework 3.14**
 * **PostgreSQL**
-* **djangorestframework-simplejwt (JWT Auth)**
+* **djangorestframework-simplejwt**
 * **python-dotenv**
 
 ---
@@ -43,14 +43,24 @@ healthcare_backend/
 
 ---
 
+## 🌐 Base URL
+
+```
+http://127.0.0.1:8001/
+```
+
+---
+
 ## ⚙️ Setup Instructions
 
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/healthcare-backend.git
-cd healthcare-backend
+git clone https://github.com/VAIBHAVPANT07/healthcare-backend-api.git
+cd healthcare-backend-api
 ```
+
+---
 
 ### 2. Create & activate virtual environment
 
@@ -60,11 +70,15 @@ source venv/bin/activate        # macOS/Linux
 venv\Scripts\activate           # Windows
 ```
 
+---
+
 ### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
+
+---
 
 ### 4. Configure environment variables
 
@@ -74,21 +88,31 @@ cp .env.example .env
 
 Edit `.env`:
 
-```
+```env
 SECRET_KEY=your-secret-key
 DEBUG=True
+
 DB_NAME=healthcare_db
-DB_USER=postgres
-DB_PASSWORD=your_password
+DB_USER=vaibhav
+DB_PASSWORD=root
 DB_HOST=localhost
 DB_PORT=5432
 ```
 
-### 5. Create PostgreSQL database
+---
+
+### 5. Setup PostgreSQL Database
+
+```bash
+psql -U postgres
+```
 
 ```sql
 CREATE DATABASE healthcare_db;
+\c healthcare_db
 ```
+
+---
 
 ### 6. Run migrations
 
@@ -96,20 +120,32 @@ CREATE DATABASE healthcare_db;
 python manage.py migrate
 ```
 
+---
+
 ### 7. Run server
 
 ```bash
 python manage.py runserver 8001
 ```
 
-👉 API will run at:
-**http://127.0.0.1:8001/**
+👉 API will be available at:
+
+```
+http://127.0.0.1:8001/
+```
 
 ---
 
 ## 🔐 Authentication
 
-All protected endpoints require:
+### ⚠️ Important Notes
+
+* Register & Login APIs → ❌ No authentication required
+* All other APIs → ✅ Require JWT token
+
+---
+
+### 🔑 Authentication Header
 
 ```
 Authorization: Bearer <access_token>
@@ -117,21 +153,24 @@ Authorization: Bearer <access_token>
 
 ---
 
-## 🧪 Quick Test Flow
+## 🔄 API Usage Flow (Step-by-Step)
 
 1. Register a user
 2. Login to get JWT token
-3. Add token in Authorization header (Bearer Token)
-4. Test all protected APIs
+3. Copy the `access` token
+4. Add it to Authorization header
+5. Use it for all protected APIs
 
 ---
 
 ## 🔑 Authentication APIs
 
-| Method | Endpoint              | Description            |
-| ------ | --------------------- | ---------------------- |
-| POST   | `/api/auth/register/` | Register a new user    |
-| POST   | `/api/auth/login/`    | Login & get JWT tokens |
+| Method | Endpoint              | Description        |
+| ------ | --------------------- | ------------------ |
+| POST   | `/api/auth/register/` | Register a user    |
+| POST   | `/api/auth/login/`    | Login & get tokens |
+
+---
 
 ### Register Request
 
@@ -144,6 +183,8 @@ Authorization: Bearer <access_token>
 }
 ```
 
+---
+
 ### Login Request
 
 ```json
@@ -153,11 +194,12 @@ Authorization: Bearer <access_token>
 }
 ```
 
+---
+
 ### Login Response
 
 ```json
 {
-  "message": "Login successful.",
   "access": "<JWT access token>",
   "refresh": "<JWT refresh token>"
 }
@@ -167,25 +209,23 @@ Authorization: Bearer <access_token>
 
 ## 👤 Patient APIs
 
-| Method | Endpoint              | Description                                  |
-| ------ | --------------------- | -------------------------------------------- |
-| POST   | `/api/patients/`      | Add a new patient                            |
-| GET    | `/api/patients/`      | Get all patients (created by logged-in user) |
-| GET    | `/api/patients/<id>/` | Get specific patient                         |
-| PUT    | `/api/patients/<id>/` | Update patient                               |
-| DELETE | `/api/patients/<id>/` | Delete patient                               |
+| Method | Endpoint              | Description       |
+| ------ | --------------------- | ----------------- |
+| POST   | `/api/patients/`      | Create patient    |
+| GET    | `/api/patients/`      | Get all patients  |
+| GET    | `/api/patients/<id>/` | Get patient by ID |
+| PUT    | `/api/patients/<id>/` | Update patient    |
+| DELETE | `/api/patients/<id>/` | Delete patient    |
 
-### Patient Request Example
+---
+
+### Example Request (POST)
 
 ```json
 {
   "name": "Jane Smith",
   "date_of_birth": "1990-05-15",
-  "gender": "F",
-  "email": "jane@example.com",
-  "phone": "9876543210",
-  "address": "Delhi, India",
-  "medical_history": "Diabetes Type 2"
+  "gender": "F"
 }
 ```
 
@@ -193,82 +233,54 @@ Authorization: Bearer <access_token>
 
 ## 👨‍⚕️ Doctor APIs
 
-| Method | Endpoint             | Description                  |
-| ------ | -------------------- | ---------------------------- |
-| POST   | `/api/doctors/`      | Add a new doctor             |
-| GET    | `/api/doctors/`      | Get all doctors              |
-| GET    | `/api/doctors/<id>/` | Get specific doctor          |
-| PUT    | `/api/doctors/<id>/` | Update doctor (creator only) |
-| DELETE | `/api/doctors/<id>/` | Delete doctor (creator only) |
-
-### Doctor Request Example
-
-```json
-{
-  "name": "Dr. Rajesh Kumar",
-  "specialization": "Cardiology",
-  "email": "dr.rajesh@hospital.com",
-  "phone": "9876500001",
-  "experience_years": 10,
-  "qualification": "MBBS, MD",
-  "available": true
-}
-```
+| Method | Endpoint             | Description      |
+| ------ | -------------------- | ---------------- |
+| POST   | `/api/doctors/`      | Create doctor    |
+| GET    | `/api/doctors/`      | Get all doctors  |
+| GET    | `/api/doctors/<id>/` | Get doctor by ID |
+| PUT    | `/api/doctors/<id>/` | Update doctor    |
+| DELETE | `/api/doctors/<id>/` | Delete doctor    |
 
 ---
 
-## 🔗 Patient-Doctor Mapping APIs
+## 🔗 Mapping APIs
 
-| Method | Endpoint                      | Description                |
-| ------ | ----------------------------- | -------------------------- |
-| POST   | `/api/mappings/`              | Assign doctor to patient   |
-| GET    | `/api/mappings/`              | Get all mappings           |
-| GET    | `/api/mappings/<patient_id>/` | Get doctors for a patient  |
-| DELETE | `/api/mappings/<id>/`         | Remove doctor from patient |
-
-### Mapping Request Example
-
-```json
-{
-  "patient": 1,
-  "doctor": 2,
-  "notes": "Primary care physician"
-}
-```
+| Method | Endpoint                      | Description              |
+| ------ | ----------------------------- | ------------------------ |
+| POST   | `/api/mappings/`              | Assign doctor to patient |
+| GET    | `/api/mappings/`              | Get all mappings         |
+| GET    | `/api/mappings/<patient_id>/` | Get doctors for patient  |
+| DELETE | `/api/mappings/<id>/`         | Remove mapping           |
 
 ---
 
-## ⚠️ Error Handling
+## 🧪 Testing with Postman
 
-| Code | Meaning                        |
-| ---- | ------------------------------ |
-| 200  | Success                        |
-| 201  | Created                        |
-| 400  | Bad Request / Validation Error |
-| 401  | Unauthorized                   |
-| 403  | Forbidden                      |
-| 404  | Not Found                      |
+* Use POST for Register & Login
+* Use Bearer Token for protected APIs
+* Do NOT send body in GET requests
+* Add token in Authorization tab
 
 ---
 
-## 📌 Key Notes
+## ⚠️ Common Errors
 
-* Patients are **scoped to the authenticated user**
-* Doctors are **visible to all users**, but editable only by creator
-* Duplicate mappings are **prevented**
-* JWT access tokens expire in **1 hour**
-* Refresh tokens valid for **7 days**
+| Error            | Reason                     |
+| ---------------- | -------------------------- |
+| 401 Unauthorized | Missing or invalid token   |
+| Database error   | Wrong `.env` configuration |
+| 403 Forbidden    | Permission issue           |
 
 ---
 
 ## 📸 API Screenshots
 
-*Add screenshots here (recommended for better evaluation):*
+*(Add screenshots here for better evaluation)*
 
-* Login success
-* Patient CRUD
-* Doctor CRUD
-* Mapping APIs
+* Register success
+* Login response
+* Patient creation
+* Patient list
 
 ---
 
@@ -280,4 +292,4 @@ Authorization: Bearer <access_token>
 
 ## ⭐ Final Note
 
-This project demonstrates a production-ready backend structure with authentication, secure APIs, and clean architecture suitable for real-world healthcare applications.
+This project demonstrates a **production-level backend system** with authentication, secure APIs, and scalable architecture — suitable for real-world healthcare applications.
