@@ -273,14 +273,19 @@ Authorization: Bearer <access_token>
 
 ---
 
-## 📸 API Screenshots
-
-*(Add screenshots here for better evaluation)*
+##  API Testing Results
 
 * Register success
+![Register](screenshot/register.png)
+
 * Login response
+![Login](screenshot/login.png)
+
 * Patient creation
+![Create Patient](screenshot/post_patients.png)
+
 * Patient list
+![Get Patients](screenshot/get_patient.png)
 
 ---
 
